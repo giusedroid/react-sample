@@ -12,7 +12,7 @@ export default class Auth {
    static async signIn(email, password){
        await simulateSlowness(1500);
         return new Promise((resolve, reject) =>{
-            if (email.search('giusedroid') > -1) return resolve({email});
+            if (email.search('cloudreach') > -1) return resolve({email});
             return reject({message: 'this is a fake IDP'});
         })
     }

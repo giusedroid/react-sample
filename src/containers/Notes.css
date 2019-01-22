@@ -1,0 +1,9 @@
+.Notes .Text{
+    margin-top: 15px;
+    font-size: 24px;
+}
+
+.Notes .Attachment {
+    color: #666;
+    font-weight: bold;
+}
