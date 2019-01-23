@@ -11,7 +11,7 @@ BUCKET_NAME=$(STACK_NAME)-bucket
 
 
 host:
-	echo "Deploying S3 Host to $(DEPLOY_ENV)"
+	echo "Deploying $(STACK_NAME) to $(DEPLOY_ENV)"
 	@aws cloudformation deploy \
 	--stack-name "$(STACK_NAME)" \
 	--capabilities CAPABILITY_NAMED_IAM \
@@ -30,4 +30,4 @@ deploy-app:
 	@aws s3 sync build/ s3://$(BUCKET_NAME)
 
 local:
-	echo "$(STACK_NAME) $(APPLICATION) $(BUCKET_NAME)"
+	echo "stack name: $(STACK_NAME) application: $(APPLICATION) bucket: $(BUCKET_NAME)"
