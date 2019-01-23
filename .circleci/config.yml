@@ -1,16 +1,24 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
 version: 2
 jobs:
+  deployS3Host:
+    docker:
+      - image: circleci/python:3.7
+    working_directory: ~/app
+
+    steps:
+      - checkout
+
+      - &awsCli run:
+          name: Install AWS cli
+          command: |
+            sudo pip install awscli
+      - run:
+          name: Deploy S3 Host
+          command: make host
+
   build:
     docker:
-      # specify the version you desire here
       - image: circleci/node:10.15
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
 
     working_directory: ~/app
 
@@ -80,3 +88,25 @@ jobs:
             mv ./build.zip /tmp/artifacts
       - store_artifacts:
           path: /tmp/artifacts/build.zip
+
+  deployApp:
+    docker:
+      - image: circleci/python:3.7
+    
+    steps:
+      - *awsCli
+      - run:
+        name: deploy app to s3 bucket
+        command: make deploy-app
+
+workflows:
+  version: 2
+  all:
+    jobs:
+      - deployS3Host
+      - build
+      - deployApp:
+          requires:
+            - deployS3Host
+            - build
+
