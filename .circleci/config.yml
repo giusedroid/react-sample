@@ -74,6 +74,6 @@ jobs:
       - run:
           name: build the app
           command: |
-            npm build
+            npm run build
       
           
