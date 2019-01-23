@@ -96,8 +96,8 @@ jobs:
     steps:
       - *awsCli
       - run:
-        name: deploy app to s3 bucket
-        command: make deploy-app
+          name: deploy app to s3 bucket
+          command: make deploy-app
 
 workflows:
   version: 2
