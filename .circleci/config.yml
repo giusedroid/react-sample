@@ -94,6 +94,7 @@ jobs:
       - image: circleci/python:3.7
     
     steps:
+      - checkout 
       # TODO : RE-USE THIS
       - run:
           name: Install AWS cli
