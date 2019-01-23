@@ -6,14 +6,17 @@ const variables = require('./variables');
 // Defines whether puppeteer runs Chrome in headless mode.
 let headless = false;
 let slowMo = 0;
+let args = [];
 // Chrome is set to run headlessly and with no slowdown in CircleCI
 if (process.env.CIRCLECI) headless = true;
 if (process.env.CIRCLECI) slowMo = 0;
+if (process.env.CIRCLECI) args.push('--no-sandbox','–disable-setuid-sandbox' );
+
 
 
 const visitPage = async (page) => {
     if (!scope.browser)
-        scope.browser = await scope.driver.launch( {headless, slowMo} );
+        scope.browser = await scope.driver.launch( {headless, slowMo, args} );
     
     scope.context.currentPage = await scope.browser.newPage();
     scope.context.currentPage.setViewport({
