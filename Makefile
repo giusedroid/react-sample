@@ -1,13 +1,13 @@
 APPLICATION="react-sample"
 
 ifeq ($(CIRCLE_BRANCH), master)
-	DEPLOY_ENV=unstable # TODO: change it to stable
+	DEPLOY_ENV=unstable
 else
 	DEPLOY_ENV=unstable
 endif
 
-STACK_NAME=$(DEPLOY_ENV)-$(APPLICATION)-s3-host
-BUCKET_NAME=$(STACK_NAME)-bucket
+STACK_NAME="$(DEPLOY_ENV)-$(APPLICATION)-s3-host"
+BUCKET_NAME="$(STACK_NAME)-bucket"
 
 
 host:
