@@ -75,5 +75,8 @@ jobs:
           name: build the app
           command: |
             npm run build
-      
-          
+            zip -r build build/
+            mkdir /tmp/artifacts
+            mv ./build.zip /tmp/artifacts
+      - store_artifacts:
+          path: /tmp/artifacts/build.zip
