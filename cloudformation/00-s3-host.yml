@@ -18,8 +18,8 @@ Resources:
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: index.html
-      LoggingConfiguration:
-        LogFilePrefix: !Sub logs/${Environment}/
+      # LoggingConfiguration:
+      #   LogFilePrefix: !Sub logs/${Environment}/
       Tags:
         - Key: "Environment"
           Value: !Ref Environment
