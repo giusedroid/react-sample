@@ -27,6 +27,7 @@ host:
 
 deploy-app:
 	echo "Deploying the application to S3 bucket $(BUCKET_NAME)"
+	ls -la
 	@aws s3 sync build/ s3://$(BUCKET_NAME)
 
 local:

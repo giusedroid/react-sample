@@ -95,6 +95,8 @@ jobs:
     docker:
       - image: circleci/python:3.7
     
+    working_directory: ~/app
+    
     steps:
       - attach_workspace:
           at: ~/app
