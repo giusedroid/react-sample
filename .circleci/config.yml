@@ -90,6 +90,12 @@ jobs:
             mv ./build.zip /tmp/artifacts
       - store_artifacts:
           path: /tmp/artifacts/build.zip
+      
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build
+            - Makefile
 
   deployApp:
     docker:
