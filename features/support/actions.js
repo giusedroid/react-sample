@@ -5,7 +5,7 @@ const variables = require('./variables');
 
 // Defines whether puppeteer runs Chrome in headless mode.
 let headless = false;
-let slowMo = 0;
+let slowMo = 5;
 let args = [];
 // Chrome is set to run headlessly and with no slowdown in CircleCI
 if (process.env.CIRCLECI) headless = true;

@@ -1,7 +1,7 @@
 APPLICATION="react-sample"
 
 ifeq ($(CIRCLE_BRANCH), master)
-	DEPLOY_ENV=unstable
+	DEPLOY_ENV=stable
 else
 	DEPLOY_ENV=unstable
 endif
@@ -21,14 +21,8 @@ host:
 	Application="$(APPLICATION)" \
 	BucketName="$(BUCKET_NAME)" \
 	--no-fail-on-empty-changeset
-	aws cloudformation describe-stacks \
-	--stack-name "$(STACK_NAME)" \
-	--query 'Stacks[0]' > /tmp/host.stack
 
 deploy-app:
 	echo "Deploying the application to S3 bucket $(BUCKET_NAME)"
 	ls -la
 	@aws s3 sync build/ s3://$(BUCKET_NAME)
-
-local:
-	echo "stack name: $(STACK_NAME) application: $(APPLICATION) bucket: $(BUCKET_NAME)"
