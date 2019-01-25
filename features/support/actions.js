@@ -12,8 +12,6 @@ if (process.env.CIRCLECI) headless = true;
 if (process.env.CIRCLECI) slowMo = 0;
 if (process.env.CIRCLECI) args.push('--no-sandbox','–disable-setuid-sandbox' );
 
-
-
 const visitPage = async (page) => {
     if (!scope.browser)
         scope.browser = await scope.driver.launch( {headless, slowMo, args} );
