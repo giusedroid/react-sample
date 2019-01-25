@@ -16,8 +16,8 @@ Although functionally meaningless (it really doesn't to anything else than exist
 
 ### Architecture
 
-<!--<img src="assets/architecture.png" width="800"/>-->
-Coming soon.
+<img src="assets/sample-react-arch.png" width="800"/>
+<!-- wow so much service - so many complexity - data whish whoosh accelerate -->
 
 ### CloudFormation Stacks
 
