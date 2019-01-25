@@ -5,7 +5,7 @@
 ## What
 
 This is a simple static react application.  
-Although functionally meaningless (it really doesn't to anything else than existing and being nice to look at<!-- just like myself-->), it helps demonstrating the following:
+Although functionally meaningless (it really doesn't do anything else than existing and being nice to look at<!-- just like myself-->), it helps demonstrating the following:
 
 - what a CircleCI Workflow is
 - how to deploy a React App to AWS
