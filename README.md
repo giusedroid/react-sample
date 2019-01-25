@@ -8,6 +8,7 @@ This is a simple static react application.
 Although functionally meaningless (it really doesn't to anything else than existing and being nice to look at<!-- just like myself-->), it helps demonstrating the following:
 
 - what a CircleCI Workflow is
+- how to deploy a React App to AWS
 - what are the different phases of testing a Front-end application and how these can be automated (Jest, Cucumber, Puppeteer)
 - how nice and shiny [React](https://reactjs.org/) is
 
@@ -25,13 +26,13 @@ Coming soon.
 `cloudformation/00-s3-host.yml`  
 This stack deploys an S3 bucket configured as a web host and the S3 bucket policy to allow `PublicRead` on the objects. This is the bucket where the application code will be uploaded and where the static webapp is served.
 
-#### CloudFront CDN
+#### [WiP] CloudFront CDN
 
 `cloudformaiton/10-cloudfront.yml`  
 This stack deploys a CDN for the webapp and wires it to the S3 host.  
 This is deployed only for the production (stable) environment.
 
-#### DNS Records
+#### [WiP] DNS Records
 
 `cloudformation/20-dns.yml`
 This stack deploys a DNS record in Route53 for either the S3 host or the CloudFront distribution.
@@ -41,8 +42,11 @@ This stack deploys a DNS record in Route53 for either the S3 host or the CloudFr
 Please have a look at [this repo issues](https://github.com/giusedroid/react-sample/issues) for further details.  
 The next milestones are:
 
+- **\[Feature\] :** write and deploy CloudFront CDN
+- **\[Feature\] :** write and deploy the DNS records
 - **\[Feature\] :** make it a Progressive Web App
 - **\[Feature\] :** integrate `aws-amplify`
+- **\[Feature\] :** hook it to a backend / auth (Cognito)
 
 ## Configure it
 
