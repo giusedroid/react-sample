@@ -63,3 +63,40 @@ No imports are needed for this deployment package. Yay!
 ### Exports
 
 This package exports nothing.
+
+## Run it
+
+### Install dependencies
+
+Install [nvm](https://github.com/creationix/nvm) and/or Node 10.13.0
+
+```bash
+nvm use
+npm i
+```
+
+### Run unit / component tests
+
+```bash
+npm test
+```
+
+### Run the development server
+
+```bash
+npm start
+```
+
+### Build it
+
+```bash
+npm run build
+```
+
+### Run acceptance tests
+
+Make sure the development server is running then
+
+```bash
+npx cucumber-js
+```
