@@ -68,6 +68,29 @@ No imports are needed for this deployment package. Yay!
 
 This package exports nothing.
 
+## Deploy it
+
+Clone this repo, get a free account on CircleCi and configure the
+build environment as described in the previous section.
+
+### CircleCI workflow (so far)
+
+<img src="assets/circleci-flow-react.png" width="800" alt="The CircleCI Workflow"/>
+
+#### build
+
+This job is runs unit, component and acceptance tests on the codebase,
+installs dependencies,
+builds a production optimized package and stores it as workflow artifact.
+
+#### deployS3Host
+
+This job installs `aws cli` and deploys the infrastructure via `cloudformation deploy`.
+
+#### deployApp
+
+This job syncs the build folder with the s3 host.
+
 ## Run it
 
 ### Install dependencies
