@@ -9,15 +9,15 @@ Although functionally meaningless (it really doesn't to anything else than exist
 
 - what a CircleCI Workflow is
 - how to deploy a React App to AWS
-- what are the different phases of testing a Front-end application and how these can be automated (Jest, Cucumber, Puppeteer)
+- what are the different phases of testing a Front-end application and how these can be automated ([Jest](https://jestjs.io/), [Cucumber](https://cucumber.io/), [Puppeteer](https://github.com/GoogleChrome/puppeteer))
 - how nice and shiny [React](https://reactjs.org/) is
 
 <img src="assets/sample-react.png" width="800" alt="A screen shot of the app"/>
 
 ### Architecture
 
-<!--<img src="assets/architecture.png" width="800"/>-->
-Coming soon.
+<img src="assets/sample-react-arch.png" width="800"/>
+<!-- wow so much service - so many complexity - data whish whoosh accelerate -->
 
 ### CloudFormation Stacks
 
