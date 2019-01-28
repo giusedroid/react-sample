@@ -107,6 +107,19 @@ jobs:
           name: deploy app to s3 bucket
           command: make deploy-app
 
+  deployCDN:
+    docker:
+      - image: circleci/python:3.7
+      working_directory: ~/app
+      steps:
+        - run:
+          name: Install AWS cli
+          command: |
+            sudo pip install awscli
+        - run:
+          name: deploy CDN
+          command: make cdn
+
 workflows:
   version: 2
   all:
@@ -117,4 +130,10 @@ workflows:
           requires:
             - deployS3Host
             - build
+      - deployCND:
+          requires:
+            - deployApp
+          filters:
+            branches:
+              only: master
 

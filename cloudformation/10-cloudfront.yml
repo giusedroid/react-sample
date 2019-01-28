@@ -1,0 +1,114 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  Environment:
+    Type: String
+  BucketName:
+    Type: String
+  TargetDomainName:
+    Type: String
+  SSLCertARN:
+    Type: String
+
+Resources:
+
+  DistributionLogS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${BucketName}-cloudfront-logs
+      Tags:
+        - Key: "Environment"
+          Value: !Ref Environment
+        - Key: "Application"
+          Value: !Sub "${BucketName} bucket for cloudfront logs"
+        - Key: "Type"
+          Value: "Logs"
+    DeletionPolicy: Retain
+
+  CloudFrontIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Sub "A CloudFront Origin Access Identity used to access ${BucketName} from ${Environment} env"
+
+  HostBucketRestrictPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      PolicyDocument:
+        Id: BucketLogPolicy
+        Version: 2012-10-17
+        Statement:
+          - Sid: ReadForGetBucketObjectsOnlyFromCloudFront
+            Effect: Allow
+            Principal: !Sub 'arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CloudFrontIdentity}'
+            Action: 's3:GetObject'
+            Resource: !Join 
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref S3Bucket
+                - /*
+      Bucket: !Ref BucketName
+
+  LogBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      PolicyDocument:
+        Id: BucketLogPolicy
+        Version: 2012-10-17
+        Statement:
+          - Sid: 
+            Effect: Allow
+            Principal: !Sub 'arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CloudFrontIdentity}'
+            Action:
+            - 's3:GetBucketAcl'
+            - 's3:PutBucketAcl'
+            Resource: !Join 
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref S3Bucket
+                - /*
+      Bucket: !Ref DistributionLogS3Bucket
+
+  HTTPSDistribution:
+    DependsOn: !Ref CloudFrontIdentity
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+        - DomainName: !Sub ${BucketName}.s3.amazonaws.com
+          Id: s3HostOrigin
+          S3OriginConfig:
+            OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${CloudFrontIdentity}
+        Enabled: 'true'
+        CustomErrorResponses:
+        - ErrorCachingMinTTL: 300
+          ErrorCode: 404
+          ResponseCode: 200
+          ResponsePagePath: '/index.html' # Delegating to react router to handle 404
+        Comment: !Sub "CloudFront HTTPS distribution for ${TargetDomainName} with origin ${BucketName} in ${Environment}"
+        DefaultRootObject: index.html
+        Logging:
+          IncludeCookies: 'false'
+          Bucket: !Sub ${DistributionLogS3Bucket}.s3.amazonaws.com
+          Prefix: cloudfront/${Environment}
+        Aliases:
+        - !Ref TargetDomainName
+        DefaultCacheBehavior:
+          AllowedMethods:
+          - GET
+          - HEAD
+          - OPTIONS
+          # - POST
+          # - PUT
+          # - PATCH
+          Compress: true
+          DefaultRootObject: index.html
+          TargetOriginId: s3HostOrigin
+          ForwardedValues:
+            QueryString: 'false'
+            Cookies:
+              Forward: none
+          ViewerProtocolPolicy: redirect-to-https
+        PriceClass: PriceClass_100 # US EU only
+        ViewerCertificate:
+          AcmCertificateArn: !Ref SSLCertARN
