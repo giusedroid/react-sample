@@ -96,7 +96,7 @@ Resources:
           ErrorCode: 403
           ResponseCode: 200
           ResponsePagePath: '/index.html' # Delegating to react router to handle 403
-        Comment: !Sub "CloudFront HTTPS distribution for ${TargetDomainName} with origin ${BucketName} in ${Environment}"
+        Comment: !Sub "CloudFront HTTPS distribution with origin ${BucketName} in ${Environment}"
         DefaultRootObject: index.html
         Logging:
           IncludeCookies: 'false'
