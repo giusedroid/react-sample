@@ -115,12 +115,12 @@ jobs:
 
     steps:
       - run: # TODO: reuse this
-        name: Install AWS cli
-        command: |
-          sudo pip install awscli
+          name: Install AWS cli
+          command: |
+            sudo pip install awscli
       - run:
-        name: deploy CDN
-        command: make cdn
+          name: deploy CDN
+          command: make cdn
 
 workflows:
   version: 2
