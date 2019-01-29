@@ -132,7 +132,7 @@ workflows:
           requires:
             - deployS3Host
             - build
-      - deployCND:
+      - deployCDN:
           requires:
             - deployApp
           # filters:
