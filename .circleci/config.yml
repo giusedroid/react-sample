@@ -110,15 +110,17 @@ jobs:
   deployCDN:
     docker:
       - image: circleci/python:3.7
-      working_directory: ~/app
-      steps:
-        - run: # TODO: reuse this
-          name: Install AWS cli
-          command: |
-            sudo pip install awscli
-        - run:
-          name: deploy CDN
-          command: make cdn
+
+    working_directory: ~/app
+    
+    steps:
+      - run: # TODO: reuse this
+        name: Install AWS cli
+        command: |
+          sudo pip install awscli
+      - run:
+        name: deploy CDN
+        command: make cdn
 
 workflows:
   version: 2
