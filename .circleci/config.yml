@@ -114,9 +114,9 @@ jobs:
     working_directory: ~/app
 
     steps:
-      - attach_workspace:
-          at: ~/app
-          
+
+      - checkout
+
       - run: # TODO: reuse this
           name: Install AWS cli
           command: |

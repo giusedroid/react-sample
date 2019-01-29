@@ -11,7 +11,7 @@ Parameters:
     Type: String
   SSLCertARN:
     Type: String
-  HostedZoneName:
+  HostedZoneId:
     Type: String
 
 Resources:
@@ -92,12 +92,16 @@ Resources:
           ErrorCode: 404
           ResponseCode: 200
           ResponsePagePath: '/index.html' # Delegating to react router to handle 404
+        - ErrorCachingMinTTL: 300
+          ErrorCode: 403
+          ResponseCode: 200
+          ResponsePagePath: '/index.html' # Delegating to react router to handle 403
         Comment: !Sub "CloudFront HTTPS distribution for ${TargetDomainName} with origin ${BucketName} in ${Environment}"
         DefaultRootObject: index.html
         Logging:
           IncludeCookies: 'false'
           Bucket: !Sub ${DistributionLogS3Bucket}.s3.amazonaws.com
-          Prefix: cloudfront/${Environment}
+          Prefix: !Sub cloudfront/${Environment}
         Aliases:
         - !Ref TargetDomainName
         DefaultCacheBehavior:
@@ -124,7 +128,7 @@ Resources:
   DNSRecord:
     Type: AWS::Route53::RecordSetGroup
     Properties:
-      HostedZoneName: !Ref HostedZoneName
+      HostedZoneId: !Ref HostedZoneId
       RecordSets:
       - Name: !Ref TargetDomainName
         Type: A
