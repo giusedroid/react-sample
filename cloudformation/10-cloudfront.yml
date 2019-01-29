@@ -1,0 +1,137 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: "Provisions a CDN hooked to a S3 Web Host and its DNS record"
+
+Parameters:
+  Environment:
+    Type: String
+  BucketName:
+    Type: String
+  TargetDomainName:
+    Type: String
+  SSLCertARN:
+    Type: String
+  HostedZoneId:
+    Type: String
+
+Resources:
+
+  DistributionLogS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${BucketName}-cloudfront-logs
+      Tags:
+        - Key: "Environment"
+          Value: !Ref Environment
+        - Key: "Application"
+          Value: !Sub "${BucketName} bucket for cloudfront logs"
+        - Key: "Type"
+          Value: "Logs"
+    DeletionPolicy: Retain
+
+  CloudFrontIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Sub "A CloudFront Origin Access Identity used to access ${BucketName} from ${Environment} env"
+
+  HostBucketRestrictPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      PolicyDocument:
+        Id: BucketLogPolicy
+        Version: 2012-10-17
+        Statement:
+          - Sid: ReadForGetBucketObjectsOnlyFromCloudFront
+            Effect: Allow
+            Principal:
+              AWS:
+              - !Sub 'arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CloudFrontIdentity}'
+            Action: 
+            - 's3:GetObject'
+            Resource: !Join 
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref BucketName
+                - /*
+      Bucket: !Ref BucketName
+
+  LogBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      PolicyDocument:
+        Id: BucketLogPolicy
+        Version: 2012-10-17
+        Statement:
+          - Sid: AllowAclAccessToCloudFrontOAId
+            Effect: Allow
+            Principal:
+              AWS:
+              - !Sub 'arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CloudFrontIdentity}'
+            Action:
+            - 's3:GetBucketAcl'
+            - 's3:PutBucketAcl'
+            Resource: !Join 
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref DistributionLogS3Bucket
+      Bucket: !Ref DistributionLogS3Bucket
+
+  HTTPSDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+        - DomainName: !Sub ${BucketName}.s3.amazonaws.com
+          Id: s3HostOrigin
+          S3OriginConfig:
+            OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${CloudFrontIdentity}
+        Enabled: 'true'
+        CustomErrorResponses:
+        - ErrorCachingMinTTL: 300
+          ErrorCode: 404
+          ResponseCode: 200
+          ResponsePagePath: '/index.html' # Delegating to react router to handle 404
+        - ErrorCachingMinTTL: 300
+          ErrorCode: 403
+          ResponseCode: 200
+          ResponsePagePath: '/index.html' # Delegating to react router to handle 403
+        Comment: !Sub "CloudFront HTTPS distribution with origin ${BucketName} in ${Environment}"
+        DefaultRootObject: index.html
+        Logging:
+          IncludeCookies: 'false'
+          Bucket: !Sub ${DistributionLogS3Bucket}.s3.amazonaws.com
+          Prefix: !Sub cloudfront/${Environment}
+        Aliases:
+        - !Ref TargetDomainName
+        DefaultCacheBehavior:
+          AllowedMethods:
+          - GET
+          - HEAD
+          - OPTIONS
+          # - POST
+          # - PUT
+          # - PATCH
+          Compress: true
+          TargetOriginId: s3HostOrigin
+          ForwardedValues:
+            QueryString: 'false'
+            Cookies:
+              Forward: none
+          ViewerProtocolPolicy: redirect-to-https
+        PriceClass: PriceClass_100 # US EU only
+        ViewerCertificate:
+          AcmCertificateArn: !Ref SSLCertARN
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.1_2016
+
+  DNSRecord:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      RecordSets:
+      - Name: !Ref TargetDomainName
+        Type: A
+        AliasTarget:
+          HostedZoneId: Z2FDTNDATAQYW2 # CloudFront SIC
+          DNSName: !GetAtt HTTPSDistribution.DomainName
