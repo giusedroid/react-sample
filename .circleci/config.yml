@@ -124,6 +124,7 @@ jobs:
       - run:
           name: deploy CDN
           command: make cdn
+          no_output_timeout: 60m
 
 workflows:
   version: 2
