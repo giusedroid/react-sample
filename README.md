@@ -76,9 +76,16 @@ This package exports nothing.
 Clone this repo, get a free account on CircleCi and configure the
 build environment as described in the previous section.
 
-### CircleCI workflow (so far)
+### CircleCI Workflows
 
-<img src="assets/circleci-flow-react.png" width="800" alt="The CircleCI Workflow"/>
+#### Unstable Branches
+
+<img src="assets/circleci-flow-react.png" width="600" alt="The CircleCI Workflow for unstable branches"/>
+
+#### Stable Branches (master)
+
+<img src="assets/circleci-react-sample-stable.png" width="600" alt="The CircleCI Workflow for Stable branches"/>
+
 
 #### build
 
