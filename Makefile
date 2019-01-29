@@ -23,10 +23,31 @@ host:
 	BucketName="$(BUCKET_NAME)" \
 	--no-fail-on-empty-changeset
 
+host-local:
+	echo "Deploying the local-$(APPLICATION) from a local machine"
+	echo "Make sure you have aws cli configured :P"
+	@aws cloudformation deploy \
+	--stack-name "local-$(APPLICATION)-s3-host" \
+	--capabilities CAPABILITY_NAMED_IAM \
+	--template-file cloudformation/00-s3-host.yml \
+	--parameter-overrides \
+	Environment=local \
+	Application="$(APPLICATION)" \
+	BucketName="local-$(APPLICATION)-bucket" \
+	--no-fail-on-empty-changeset
+
+build-local:
+	npm run build
+
 deploy-app:
 	echo "Deploying the application to S3 bucket $(BUCKET_NAME)"
-	ls -la
 	@aws s3 sync build/ s3://$(BUCKET_NAME)
+
+deploy-app-local:
+	echo "Deploying the application to S3 bucket $(BUCKET_NAME)"
+	echo "Make sure you have aws cli configured :P"
+	ls -la
+	@aws s3 sync build/ s3://local-$(APPLICATION)-bucket
 
 cdn:
 	echo "Deploying CDN on $(DEPLOY_ENV)"
@@ -43,13 +64,21 @@ cdn:
 
 cdn-local:
 	echo "Deploying CDN on $(DEPLOY_ENV)"
+	echo "Make sure you have aws cli configured :P"
 	@aws cloudformation deploy \
-	--stack-name "local-$(CDN_STACK_NAME)" \
+	--stack-name "local-$(APPLICATION)-cdn" \
 	--capabilities CAPABILITY_NAMED_IAM \
 	--template-file cloudformation/10-cloudfront.yml \
 	--parameter-overrides \
-	Environment="$(DEPLOY_ENV)" \
-	BucketName="$(BUCKET_NAME)" \
-	TargetDomainName="$(TARGET_DOMAIN_NAME)" \
+	Environment="local" \
+	BucketName="local-$(APPLICATION)-bucket" \
+	TargetDomainName="react-sample-local.appmod.aws.crlabs.cloud" \
 	SSLCertARN="$(CLOUDFRONT_SSL_CERT_ARN)" \
+	HostedZoneName='appmod.aws.crlabs.cloud' \
 	--no-fail-on-empty-changeset
+
+local:
+	# make host-local
+	# make build-local
+	# make deploy-app-local
+	make cdn-local
