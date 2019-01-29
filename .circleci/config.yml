@@ -139,7 +139,7 @@ workflows:
       - deployCDN:
           requires:
             - deployApp
-          # filters:
-          #   branches:
-          #     only: master
+          filters:
+            branches:
+              only: master
 

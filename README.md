@@ -26,11 +26,12 @@ Although functionally meaningless (it really doesn't do anything else than exist
 `cloudformation/00-s3-host.yml`  
 This stack deploys an S3 bucket configured as a web host and the S3 bucket policy to allow `PublicRead` on the objects. This is the bucket where the application code will be uploaded and where the static webapp is served.
 
-#### [WiP] CloudFront CDN
+#### CloudFront CDN
 
 `cloudformaiton/10-cloudfront.yml`  
 This stack deploys a CDN for the webapp and wires it to the S3 host.  
-This is deployed only for the production (stable) environment.
+This is deployed only for the production (stable) environment.  
+At the moment it also deploys a DNS record for the distribution.
 
 #### [WiP] DNS Records
 
@@ -42,7 +43,6 @@ This stack deploys a DNS record in Route53 for either the S3 host or the CloudFr
 Please have a look at [this repo issues](https://github.com/giusedroid/react-sample/issues) for further details.  
 The next milestones are:
 
-- **\[Feature\] :** write and deploy CloudFront CDN
 - **\[Feature\] :** write and deploy the DNS records
 - **\[Feature\] :** make it a Progressive Web App
 - **\[Feature\] :** integrate `aws-amplify`
@@ -59,6 +59,9 @@ Variables that must be in your (CI) environment to successfully deploy the stack
 | AWS_ACCESS_KEY_ID | Your AWS Account Access Key |
 | AWS_SECRET_ACCESS_KEY | Your AWS Account Access Secret Key |
 | AWS_DEFAULT_REGION | Your Default AWS Region|
+| APPLICATION_DOMAIN_NAME | Your domain name, for example `cloudreach.com`. The final domain will be `react-sample-${DEPLOY_TO}.cloudreach.com` |
+| CLOUDFRONT_SSL_CERT_ARN | The ARN of an SSL certificate issued for `APPLICATION_DOMAIN_NAME` |
+| HOSTED_ZONE_ID | The id of the hosted zone where `APPLICATION_DOMAIN_NAME` is hosted. |
 
 ### Imports
 
@@ -126,4 +129,10 @@ Make sure the development server is running then
 
 ```bash
 npx cucumber-js
+```
+
+## Deploy it from your machine
+
+```bash
+make local
 ```
